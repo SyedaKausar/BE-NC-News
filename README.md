@@ -1,9 +1,9 @@
 files to add to connect to the two databases:
-.env. files
+You will need two .env. files.
+`.env.development` and `.env.test`
+These should have the correct database name for the environment
 
-Instructions on how to create environment variables
-
-The database connection settings can be set using environment variables:
-`PGDATABASE=my_database_name node db/index.js`
-Accepted environment variables include `PGDATABASE, PGUSER,PGPASSWORD, PGHOST, & PGPORT`.
-If no `PGDATABASE` environment variable is set, `node-postgres` will connect to the default database.
+For the `.env.development` file:
+`PGDATABASE=nc_news `
+For the `.env.test` file:
+`PGDATABASE=nc_news_test`
