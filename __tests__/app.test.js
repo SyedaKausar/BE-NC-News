@@ -40,14 +40,15 @@ describe("GET /api/articles/:article_id", () => {
       .then(({ body }) => {
         const { article } = body;
         console.log(article, body);
-        expect(article.to.be.an("object"));
-        expect(article).toMatchObject({
-          title: expect.any(String),
-          topic: expect.any(String),
-          author: expect.any(String),
-          body: expect.any(String),
-          created_at: expect.any(Date),
-          votes: expect.any(Number),
+        //expect(article.to.be.an("object"));
+        expect(article).toEqual({
+          article_id: 1,
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: 1594329060000,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          votes: 100,
         });
       });
   });

@@ -15,3 +15,6 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
+//article not found - 
+//if statement - custom error handling
+//400 psql error 
