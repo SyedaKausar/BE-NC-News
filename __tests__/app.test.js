@@ -28,4 +28,27 @@ describe("GET /api/topics", () => {
         });
       });
   });
+  test("status 404: not found when passed an invalid endpoint", () => {
+    return request(app).get("/api/apples").expect(404);
+  });
+});
+describe("GET /api/articles/:article_id", () => {
+  test("status 200: responds with an Article object", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        console.log(article, body);
+        expect(article.to.be.an("object"));
+        expect(article).toMatchObject({
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(Date),
+          votes: expect.any(Number),
+        });
+      });
+  });
 });
