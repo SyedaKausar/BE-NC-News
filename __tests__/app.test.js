@@ -33,7 +33,7 @@ describe("GET /api/topics", () => {
   });
 });
 describe("GET /api/articles/:article_id", () => {
-  test.only("status 200: responds with an Article object", () => {
+  test("status 200: responds with an Article object", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -50,5 +50,8 @@ describe("GET /api/articles/:article_id", () => {
           votes: 100,
         });
       });
+  });
+  test("status 400: responds with bad request when invalid input", () => {
+    return request(app).get("/api/articles/cats").expect(400);
   });
 });
