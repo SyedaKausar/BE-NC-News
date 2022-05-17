@@ -33,9 +33,9 @@ describe("GET /api/topics", () => {
   });
 });
 describe("GET /api/articles/:article_id", () => {
-  test("status 200: responds with an Article object", () => {
+  test.only("status 200: responds with an Article object", () => {
     return request(app)
-      .get("/api/articles/2")
+      .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
         const { article } = body;

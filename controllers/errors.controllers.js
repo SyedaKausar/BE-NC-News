@@ -1,5 +1,9 @@
 exports.handleCustomErrors = (err, req, res, next) => {
-  res.status(err.status).send({ msg: err.msg });
+  if (err.status) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
 };
 exports.handlePSQLerrors = (err, req, res, next) => {
   if (err.code === "22P02") {
@@ -9,6 +13,6 @@ exports.handlePSQLerrors = (err, req, res, next) => {
   }
 };
 exports.handleInternalServerErrors = (err, req, res, next) => {
-  console.log(err);
+  console.log(err, "<<<<<<");
   res.sendStatus(500);
 };
