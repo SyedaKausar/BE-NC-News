@@ -9,3 +9,16 @@ exports.fetchArticle = (id) => {
       return rows[0];
     });
 };
+exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
+  return db
+    .query(
+      "UPDATE articles SET votes = $2 + votes  WHERE article_id =$1 RETURNING *",
+      [id, incrementVotes]
+    )
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return rows[0];
+    });
+};
