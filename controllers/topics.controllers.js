@@ -7,7 +7,7 @@ exports.getTopics = (req, res) => {
 };
 exports.getArticle = (req, res) => {
   const id = parseInt(req.params.article_id);
- // console.log(id, typeof id);
+ 
   fetchArticle(id).then((article) => {
     res.status(200).send({ article });
   });

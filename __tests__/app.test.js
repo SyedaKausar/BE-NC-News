@@ -39,13 +39,12 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        console.log(article, body);
-        //expect(article.to.be.an("object"));
+
         expect(article).toEqual({
           article_id: 1,
           author: "butter_bridge",
           body: "I find this existence challenging",
-          created_at: 1594329060000,
+          created_at: expect.any(String),
           title: "Living in the shadow of a great man",
           topic: "mitch",
           votes: 100,
