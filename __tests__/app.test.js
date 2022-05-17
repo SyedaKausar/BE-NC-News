@@ -29,13 +29,14 @@ describe("GET /api/topics", () => {
       });
   });
   test("status 404: not found when passed an invalid endpoint", () => {
+
     return request(app)
       .get("/api/apples")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route not found");
       });
-  });
+
 });
 describe("GET /api/articles/:article_id", () => {
   test("status 200: responds with an Article object", () => {
@@ -44,6 +45,7 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
+
 
         expect(article).toEqual({
           article_id: 1,
@@ -64,4 +66,5 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+
 });
