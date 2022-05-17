@@ -13,6 +13,5 @@ exports.handlePSQLerrors = (err, req, res, next) => {
   }
 };
 exports.handleInternalServerErrors = (err, req, res, next) => {
-  console.log(err, "<<<<<<");
   res.sendStatus(500);
 };

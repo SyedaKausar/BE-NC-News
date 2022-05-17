@@ -29,7 +29,12 @@ describe("GET /api/topics", () => {
       });
   });
   test("status 404: not found when passed an invalid endpoint", () => {
-    return request(app).get("/api/apples").expect(404);
+    return request(app)
+      .get("/api/apples")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route not found");
+      });
   });
 });
 describe("GET /api/articles/:article_id", () => {
@@ -52,6 +57,11 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
   test("status 400: responds with bad request when invalid input", () => {
-    return request(app).get("/api/articles/cats").expect(400);
+    return request(app)
+      .get("/api/articles/cats")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
   });
 });
