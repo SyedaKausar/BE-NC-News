@@ -4,7 +4,8 @@ const {
   handlePSQLerrors,
   handleInternalServerErrors,
 } = require("./controllers/errors.controllers");
-const { getTopics, getArticle } = require("./controllers/topics.controllers");
+const { getTopics } = require("./controllers/topics.controllers");
+const { getArticle } = require("./controllers/articles.controllers.js");
 const app = express();
 app.use(express.json());
 app.get("/api/topics", getTopics);
@@ -18,4 +19,3 @@ app.use(handleCustomErrors);
 app.use(handleInternalServerErrors);
 
 module.exports = app;
-
