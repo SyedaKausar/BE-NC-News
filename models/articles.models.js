@@ -1,7 +1,14 @@
 const db = require("../db/connection.js");
 exports.fetchArticle = (id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [id])
+    .query(
+      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id`,
+      [id]
+    )
     .then(({ rows }) => {
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
@@ -10,7 +17,6 @@ exports.fetchArticle = (id) => {
     });
 };
 exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
- 
   if (!incrementVotes) {
     return Promise.reject({
       status: 400,
@@ -23,7 +29,6 @@ exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
       [id, incrementVotes]
     )
     .then(({ rows }) => {
-      
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
