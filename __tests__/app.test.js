@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data");
+require("jest-sorted");
 afterAll(() => {
   return db.end();
 });
@@ -126,6 +127,42 @@ describe("GET /api/users", () => {
         const { users } = body;
         expect(users).toBeInstanceOf(Array);
         expect(users).toHaveLength(4);
+      });
+  });
+  test("status 404: not found when passed an invalid endpoint", () => {
+    return request(app)
+      .get("/api/notusers")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route not found");
+      });
+  });
+});
+describe("GET /api/articles", () => {
+  test("status 200: responds with an array of article objects with comment count and sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        console.log(typeof articles);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
       });
   });
   test("status 404: not found when passed an invalid endpoint", () => {
