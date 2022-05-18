@@ -10,20 +10,11 @@ exports.fetchArticle = (id) => {
       [id]
     )
     .then(({ rows }) => {
-      console.log(rows[0]);
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
       return rows[0];
     });
-  /* SELECT articles.*, COUNT(article_id) 
-       FROM articles ON articles.article_id
-       LEFT JOIN articles.article_id = comments.article_id
-       WHERE article_id = $1
-       GROUP BY articles.article_id
-
-   
-    */
 };
 exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
   if (!incrementVotes) {
