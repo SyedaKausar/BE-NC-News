@@ -116,3 +116,23 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe("GET /api/users", () => {
+  test("200: responds with an array of objects with the username property", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+      });
+  });
+  test("status 404: not found when passed an invalid endpoint", () => {
+    return request(app)
+      .get("/api/notusers")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route not found");
+      });
+  });
+});
