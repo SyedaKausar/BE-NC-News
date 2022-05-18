@@ -28,15 +28,15 @@ describe("GET /api/topics", () => {
         });
       });
   });
-  test("status 404: not found when passed an invalid endpoint", () => {
 
+  test("status 404: not found when passed an invalid endpoint", () => {
     return request(app)
       .get("/api/apples")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route not found");
       });
-
+  });
 });
 describe("GET /api/articles/:article_id", () => {
   test("status 200: responds with an Article object", () => {
@@ -45,7 +45,6 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-
 
         expect(article).toEqual({
           article_id: 1,
@@ -66,5 +65,54 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-
+});
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: responds with updated article", () => {
+    const incrementBy = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementBy)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 105,
+        });
+      });
+  });
+  test("status 400: responds with bad request when invalid input", () => {
+    const incrementBy = { inc_votes: "not_a_number" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("status 404: not found when article doesn't exist", () => {
+    const incrementBy = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/99999")
+      .send(incrementBy)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("status 400: responds with bad request when vote key is missing", () => {
+    const incrementBy = { not_a_Key: 1 };
+    return request(app)
+      .patch("/api/articles/cats")
+      .send(incrementBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request, required fields missing");
+      });
+  });
 });

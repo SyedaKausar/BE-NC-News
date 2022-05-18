@@ -13,5 +13,5 @@ exports.handlePSQLerrors = (err, req, res, next) => {
   }
 };
 exports.handleInternalServerErrors = (err, req, res, next) => {
-  res.sendStatus(500);
+  res.status(500).send("internal Server error");
 };
