@@ -39,7 +39,7 @@ describe("GET /api/topics", () => {
   });
 });
 describe("GET /api/articles/:article_id", () => {
-  test("status 200: responds with an Article object", () => {
+  test("status 200: responds with an Article object with comment count", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
