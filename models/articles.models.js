@@ -10,7 +10,7 @@ exports.fetchArticle = (id) => {
     });
 };
 exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
-  console.log(incrementVotes);
+ 
   if (!incrementVotes) {
     return Promise.reject({
       status: 400,
@@ -23,7 +23,7 @@ exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
       [id, incrementVotes]
     )
     .then(({ rows }) => {
-      console.log(rows);
+      
       if (!rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
