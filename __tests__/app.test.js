@@ -152,12 +152,14 @@ describe("GET /api/articles", () => {
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
               title: expect.any(String),
               topic: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
+              body: expect.any(String),
+              comment_count: expect.any(String),
             })
           );
         });
