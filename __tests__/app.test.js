@@ -145,7 +145,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        console.log(typeof articles);
+
         expect(articles).toBeSortedBy("created_at", { descending: true });
         expect(articles).toBeInstanceOf(Array);
         expect(articles).toHaveLength(12);
@@ -168,6 +168,49 @@ describe("GET /api/articles", () => {
   test("status 404: not found when passed an invalid endpoint", () => {
     return request(app)
       .get("/api/notusers")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route not found");
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: responds with an array of comments for the given article_id", () => {
+    return request(app)
+      .get("/api/articles/9/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual([
+          {
+            comment_id: 1,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: 16,
+            author: "butter_bridge",
+            article_id: 9,
+            created_at: "2020-04-06T12:17:00.000Z",
+          },
+          {
+            comment_id: 17,
+            body: "The owls are not what they seem.",
+            votes: 20,
+            author: "icellusedkars",
+            article_id: 9,
+            created_at: "2020-03-14T17:02:00.000Z",
+          },
+        ]);
+      });
+  });
+  test("status 404: not found when article doesn't exist", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("status 404: not found when passed an invalid endpoint", () => {
+    return request(app)
+      .get("/api/articles/2/notcomments")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route not found");

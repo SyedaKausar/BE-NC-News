@@ -43,7 +43,16 @@ exports.fetchAllArticles = () => {
   GROUP BY articles.article_id
   ORDER BY created_at DESC`;
   return db.query(queryStr).then((body) => {
-    console.log(body.rows);
     return body.rows;
   });
+};
+exports.fetchCommentsByArticleId = (id) => {
+  return db
+    .query(`SELECT * FROM comments WHERE article_id = $1`, [id])
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return rows;
+    });
 };
