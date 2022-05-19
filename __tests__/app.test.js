@@ -200,12 +200,12 @@ describe("GET /api/articles/:article_id/comments", () => {
         ]);
       });
   });
-  test("status 404: not found when article doesn't exist", () => {
+  test("status 200: empty when article doesn't exist", () => {
     return request(app)
       .get("/api/articles/9999/comments")
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found");
+        expect(body.article).toEqual([]);
       });
   });
   test("status 404: not found when passed an invalid endpoint", () => {
@@ -216,4 +216,20 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Route not found");
       });
   });
+  test("status 400: not found when passed an invalid article id", () => {
+    return request(app)
+      .get("/api/articles/then/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
+test("200: responds with an empty array for artciles without any comments", () => {
+  return request(app)
+    .get("/api/articles/8/comments")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.article).toEqual([]);
+    });
 });
