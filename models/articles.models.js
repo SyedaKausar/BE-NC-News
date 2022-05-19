@@ -50,10 +50,22 @@ exports.fetchCommentsByArticleId = (id) => {
   return db
     .query(`SELECT * FROM comments WHERE article_id = $1`, [id])
     .then(({ rows }) => {
-      console.log(rows);
       if (!rows.length) {
         return [];
       }
       return rows;
+    });
+};
+exports.postCommentsByArticleIdmodel = (id, username, body) => {
+  return db
+    .query(
+      `INSERT INTO comments (body, author, article_id)
+VALUES ($1, $2, $3)
+RETURNING *`,
+      [body, username, id]
+    )
+    .then(({ rows }) => {
+      
+      return rows[0];
     });
 };
