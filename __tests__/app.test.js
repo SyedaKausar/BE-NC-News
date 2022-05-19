@@ -224,12 +224,68 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+
+  test("200: responds with an empty array for artciles without any comments", () => {
+    return request(app)
+      .get("/api/articles/8/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual([]);
+      });
+  });
 });
-test("200: responds with an empty array for artciles without any comments", () => {
-  return request(app)
-    .get("/api/articles/8/comments")
-    .expect(200)
-    .then(({ body }) => {
-      expect(body.article).toEqual([]);
-    });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("200: responds with the posted comment", () => {
+    const input = { username: "butter_bridge", body: "body" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(input)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          comment_id: 19,
+          body: "body",
+          article_id: 1,
+          author: "butter_bridge",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("status 404: responds with not found when user does not exist input", () => {
+    const input = { username: "hello", body: "this is body" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(input)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("status 400: responds with bad request when key is missing in input", () => {
+    const input = { body: false };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(input)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("status 200: returns empty array when id is valid but doesn't exist", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual([]);
+      });
+  });
+  test("status 400: returns bad req when article is not a num array", () => {
+    return request(app)
+      .get("/api/articles/notanumber/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });

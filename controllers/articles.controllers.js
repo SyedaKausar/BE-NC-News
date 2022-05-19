@@ -3,6 +3,7 @@ const {
   fetchArticleByIdToPatch,
   fetchAllArticles,
   fetchCommentsByArticleId,
+  postCommentsByArticleIdmodel,
 } = require("../models/articles.models");
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
@@ -31,7 +32,16 @@ exports.getCommentsByArticleId = (req, res, next) => {
   fetchCommentsByArticleId(article_id)
     .then((article) => {
       res.status(200).send({ article });
-      
+    })
+    .catch(next);
+};
+exports.postCommentsByArticleIdcontroller = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username } = req.body;
+  const { body } = req.body;
+  postCommentsByArticleIdmodel(article_id, username, body)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };
