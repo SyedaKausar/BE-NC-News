@@ -37,8 +37,9 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 exports.postCommentsByArticleIdcontroller = (req, res, next) => {
   const { article_id } = req.params;
-
-  postCommentsByArticleIdmodel(article_id, req.body.username, req.body.body)
+  const { username } = req.body;
+  const { body } = req.body;
+  postCommentsByArticleIdmodel(article_id, username, body)
     .then((article) => {
       res.status(200).send({ article });
     })

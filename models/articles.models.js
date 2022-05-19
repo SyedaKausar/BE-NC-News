@@ -1,21 +1,36 @@
 const db = require("../db/connection.js");
 
-exports.fetchArticle = (id) => {
-  return db
-    .query(
-      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
-    FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    WHERE articles.article_id = $1
-    GROUP BY articles.article_id`,
-      [id]
-    )
-    .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "not found" });
-      }
-      return rows[0];
-    });
+exports.fetchArticle = (sort_by = "created_at", order = "DESC", id, topic) => {
+  const validSortBy = [
+    "title",
+    "topic",
+    "author",
+    "body",
+    "votes",
+    "created_at",
+    "comment_count",
+  ];
+  const queryStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+  FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id`;
+
+  let orderStr = "DESC";
+  if (order === "asc") {
+    orderStr = "ASC";
+  }
+  if (sort_by) {
+    if (validSortBy.includes(sort_by)) {
+      queryStr += ` ORDER BY ${sort_by} DESC`;
+    }
+  }
+  return db.query(queryStr, [id]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return rows[0];
+  });
 };
 exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
   if (!incrementVotes) {
@@ -65,7 +80,6 @@ RETURNING *`,
       [body, username, id]
     )
     .then(({ rows }) => {
-      
       return rows[0];
     });
 };

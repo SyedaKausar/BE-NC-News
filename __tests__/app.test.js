@@ -280,4 +280,12 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.article).toEqual([]);
       });
   });
+  test("status 400: returns bad req when article is not a num array", () => {
+    return request(app)
+      .get("/api/articles/notanumber/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
