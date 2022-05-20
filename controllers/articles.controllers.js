@@ -4,6 +4,7 @@ const {
   fetchAllArticles,
   fetchCommentsByArticleId,
   postCommentsByArticleIdmodel,
+  removeCommentById,
 } = require("../models/articles.models");
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
@@ -22,9 +23,14 @@ exports.patchArticleById = (req, res, next) => {
     .catch(next);
 };
 exports.getAllArticles = (req, res, next) => {
-  fetchAllArticles().then((articles) => {
-    res.status(200).send({ articles });
-  });
+  const { sort_by, order, topic } = req.query;
+  fetchAllArticles(sort_by, order, topic)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
@@ -37,11 +43,17 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 exports.postCommentsByArticleIdcontroller = (req, res, next) => {
   const { article_id } = req.params;
-  const { username } = req.body;
-  const { body } = req.body;
+  const { username, body } = req.body;
+
   postCommentsByArticleIdmodel(article_id, username, body)
     .then((article) => {
       res.status(200).send({ article });
     })
     .catch(next);
+};
+exports.deleteCommentById = (req, res, next) => {
+  const { article_id } = req.params;
+  removeCommentById(article_id).then((comment) => {
+    res.status(204).send({ comment });
+  });
 };

@@ -10,6 +10,7 @@ const {
   patchArticleById,
   getAllArticles,
   postCommentsByArticleIdcontroller,
+  deleteCommentById,
 } = require("./controllers/articles.controllers.js");
 const { getUsers } = require("./controllers/users.controllers");
 const {
@@ -27,6 +28,7 @@ app.post(
   "/api/articles/:article_id/comments",
   postCommentsByArticleIdcontroller
 );
+app.delete("/api/comments/:comment_id", deleteCommentById);
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });
 });
