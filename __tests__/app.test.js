@@ -437,6 +437,6 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app).delete("/api/comments/notnumber").expect(400);
   });
   test("status:404, responds with not found when comment id not found", () => {
-    return request(app).delete("/api/comments/999").expect(400);
+    return request(app).delete("/api/comments/99999").expect(404);
   });
 });
