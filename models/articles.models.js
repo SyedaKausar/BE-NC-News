@@ -108,8 +108,21 @@ RETURNING *`,
 };
 exports.removeCommentById = (id) => {
   return db
-    .query("DELETE FROM comments WHERE comment_id = $1", [id])
+    .query(`SELECT comment_id FROM comments`)
     .then((result) => {
+      let queryStr = "DELETE FROM comments WHERE comment_id = $1";
+      const idArray = result.rows.map(function (element) {
+        return element.comment_id;
+      });
+      
+      if (idArray.includes(id)) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+
+      return db.query(queryStr, [id]);
+    })
+    .then((result) => {
+     
       return result.rows[0];
     });
 };

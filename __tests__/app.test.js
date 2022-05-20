@@ -420,7 +420,7 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("status 404: bad req when topic is not in database", () => {
+  test("status 404: not found when topic is not in database", () => {
     return request(app)
       .get("/api/articles?topic=no")
       .expect(404)
@@ -431,6 +431,12 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
 });
 describe("DELETE /api/comments/:comment_id", () => {
   test("status:204, responds with an empty response body", () => {
-    return request(app).delete("/api/comments/1").expect(204);
+    return request(app).delete("/api/comments/5").expect(204);
+  });
+  test("status:400, responds with bad request when invalid input", () => {
+    return request(app).delete("/api/comments/notnumber").expect(400);
+  });
+  test("status:404, responds with not found when comment id not found", () => {
+    return request(app).delete("/api/comments/99999").expect(404);
   });
 });
