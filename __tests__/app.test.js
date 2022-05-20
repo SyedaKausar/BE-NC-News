@@ -431,6 +431,6 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
 });
 describe("DELETE /api/comments/:comment_id", () => {
   test("status:204, responds with an empty response body", () => {
-    return request(app).delete("/api/comments/1").expect(204);
+    return request(app).delete("/api/comments/5").expect(204);
   });
 });

@@ -53,6 +53,7 @@ exports.postCommentsByArticleIdcontroller = (req, res, next) => {
 };
 exports.deleteCommentById = (req, res, next) => {
   const { article_id } = req.params;
+
   removeCommentById(article_id).then((comment) => {
     res.status(204).send({ comment });
   });
