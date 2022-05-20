@@ -107,6 +107,10 @@ RETURNING *`,
     });
 };
 exports.removeCommentById = (id) => {
+  if (!typeof id === "number") {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+
   return db
     .query("DELETE FROM comments WHERE comment_id = $1", [id])
     .then((result) => {

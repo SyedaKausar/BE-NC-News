@@ -433,4 +433,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   test("status:204, responds with an empty response body", () => {
     return request(app).delete("/api/comments/5").expect(204);
   });
+  test("status:400, responds with bad request when invalid input", () => {
+    return request(app).delete("/api/comments/notnumber").expect(400);
+  });
 });
