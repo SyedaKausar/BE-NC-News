@@ -4,6 +4,7 @@ const {
   fetchAllArticles,
   fetchCommentsByArticleId,
   postCommentsByArticleIdmodel,
+  removeCommentById,
 } = require("../models/articles.models");
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
@@ -49,4 +50,10 @@ exports.postCommentsByArticleIdcontroller = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch(next);
+};
+exports.deleteCommentById = (req, res, next) => {
+  const { article_id } = req.params;
+  removeCommentById(article_id).then((comment) => {
+    res.status(204).send({ comment });
+  });
 };

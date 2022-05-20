@@ -34,10 +34,10 @@ exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
 };
 exports.fetchAllArticles = (sort_by = "created_at", order = "DESC", topic) => {
   return db
-    .query(`SELECT topic FROM articles GROUP BY topic`)
+    .query(`SELECT slug FROM topics GROUP BY slug`)
     .then((result) => {
       const topicArray = result.rows.map(function (element) {
-        return element.topic;
+        return element.slug;
       });
 
       const validSortBy = [
@@ -74,11 +74,10 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "DESC", topic) => {
         if (validSortBy.includes(sort_by)) {
           queryStr += ` ORDER BY ${sort_by} ${orderStr}`;
         } else {
-          console.log(sort_by);
           return Promise.reject({ status: 400, msg: "bad request" });
         }
       }
-      console.log(queryStr);
+
       return db.query(queryStr);
     })
     .then((body) => {
@@ -105,5 +104,12 @@ RETURNING *`,
     )
     .then(({ rows }) => {
       return rows[0];
+    });
+};
+exports.removeCommentById = (id) => {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1", [id])
+    .then((result) => {
+      return result.rows[0];
     });
 };

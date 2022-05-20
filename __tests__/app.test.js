@@ -388,12 +388,19 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
         ]);
       });
   });
+  test("200: responds with an empty array when topic exists but no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual([]);
+      });
+  });
   test("status 404: not found when topic is not in database", () => {
     return request(app)
       .get("/api/articles?topic=no")
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("not found");
       });
   });
@@ -402,7 +409,6 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
       .get("/api/articles?sort_by=notanumber&order=asc")
       .expect(400)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("bad request");
       });
   });
@@ -411,7 +417,6 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
       .get("/api/articles?sort_by=no&order=notasc")
       .expect(400)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("bad request");
       });
   });
@@ -420,8 +425,12 @@ describe("GET /api/articles?sortby&&order&&topic", () => {
       .get("/api/articles?topic=no")
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("not found");
       });
+  });
+});
+describe("DELETE /api/comments/:comment_id", () => {
+  test("status:204, responds with an empty response body", () => {
+    return request(app).delete("/api/comments/1").expect(204);
   });
 });
