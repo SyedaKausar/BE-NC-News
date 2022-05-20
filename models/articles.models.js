@@ -1,30 +1,11 @@
 const db = require("../db/connection.js");
 
-exports.fetchArticle = (sort_by = "created_at", order = "DESC", id, topic) => {
-  const validSortBy = [
-    "title",
-    "topic",
-    "author",
-    "body",
-    "votes",
-    "created_at",
-    "comment_count",
-  ];
+exports.fetchArticle = (id) => {
   const queryStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
   WHERE articles.article_id = $1
   GROUP BY articles.article_id`;
-
-  let orderStr = "DESC";
-  if (order === "asc") {
-    orderStr = "ASC";
-  }
-  if (sort_by) {
-    if (validSortBy.includes(sort_by)) {
-      queryStr += ` ORDER BY ${sort_by} DESC`;
-    }
-  }
   return db.query(queryStr, [id]).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({ status: 404, msg: "not found" });
@@ -51,15 +32,58 @@ exports.fetchArticleByIdToPatch = (id, incrementVotes) => {
       return rows[0];
     });
 };
-exports.fetchAllArticles = () => {
-  let queryStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
-  FROM articles
-  LEFT JOIN comments ON articles.article_id = comments.article_id  
-  GROUP BY articles.article_id
-  ORDER BY created_at DESC`;
-  return db.query(queryStr).then((body) => {
-    return body.rows;
-  });
+exports.fetchAllArticles = (sort_by = "created_at", order = "DESC", topic) => {
+  return db
+    .query(`SELECT topic FROM articles GROUP BY topic`)
+    .then((result) => {
+      const topicArray = result.rows.map(function (element) {
+        return element.topic;
+      });
+
+      const validSortBy = [
+        "title",
+        "topic",
+        "author",
+        "body",
+        "created_at",
+        "votes",
+      ];
+
+      let queryStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+      FROM articles
+      LEFT JOIN comments ON articles.article_id = comments.article_id  
+      
+     `;
+      if (topic) {
+        if (topicArray.includes(topic)) {
+          queryStr += ` WHERE articles.topic = '${topic}'`;
+        } else {
+          return Promise.reject({ status: 404, msg: "not found" });
+        }
+      }
+      // } else {
+      //   queryStr += ` GROUP BY articles.article_id`;
+      // }
+      let orderStr = "DESC";
+      if (order === "asc") {
+        orderStr = "ASC";
+      }
+      queryStr += ` GROUP BY articles.article_id`;
+
+      if (sort_by) {
+        if (validSortBy.includes(sort_by)) {
+          queryStr += ` ORDER BY ${sort_by} ${orderStr}`;
+        } else {
+          console.log(sort_by);
+          return Promise.reject({ status: 400, msg: "bad request" });
+        }
+      }
+      console.log(queryStr);
+      return db.query(queryStr);
+    })
+    .then((body) => {
+      return body.rows;
+    });
 };
 exports.fetchCommentsByArticleId = (id) => {
   return db

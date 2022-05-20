@@ -144,12 +144,12 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        const { articles } = body;
+        const { article } = body;
 
-        expect(articles).toBeSortedBy("created_at", { descending: true });
-        expect(articles).toBeInstanceOf(Array);
-        expect(articles).toHaveLength(12);
-        articles.forEach((article) => {
+        expect(article).toBeSortedBy("created_at", { descending: true });
+        expect(article).toBeInstanceOf(Array);
+        expect(article).toHaveLength(12);
+        article.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
               article_id: expect.any(Number),
@@ -280,12 +280,148 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.article).toEqual([]);
       });
   });
-  test("status 400: returns bad req when article is not a num array", () => {
+  test("status 400: returns bad req when article id is not a number", () => {
     return request(app)
       .get("/api/articles/notanumber/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+});
+describe("GET /api/articles?sortby&&order&&topic", () => {
+  test("status 200: responds with an array of article sorted by date in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+
+        expect(article).toBeSortedBy("created_at");
+        expect(article).toBeInstanceOf(Array);
+        expect(article).toHaveLength(12);
+        article.forEach((article1) => {
+          expect(article1).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+
+  test("status 200: responds with an array of article sorted by title in descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+
+        expect(article).toBeSortedBy("title");
+        expect(article).toBeInstanceOf(Array);
+        expect(article).toHaveLength(12);
+        article.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("status 200: responds with an array of article sorted by votes in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+
+        expect(article).toBeSortedBy("votes");
+        expect(article).toBeInstanceOf(Array);
+        expect(article).toHaveLength(12);
+        article.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("200: responds with array filtered by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual([
+          {
+            article_id: 5,
+            title: "UNCOVERED: catspiracy to bring down democracy",
+            topic: "cats",
+            author: "rogersop",
+            body: "Bastet walks amongst us, and the cats are taking arms!",
+            created_at: expect.any(String),
+            votes: 0,
+            comment_count: "2",
+          },
+        ]);
+      });
+  });
+  test("status 404: not found when topic is not in database", () => {
+    return request(app)
+      .get("/api/articles?topic=no")
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("status 400: bad req when sort_by coloumn doesnt exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=notanumber&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("status 400: bad req when order is not asc or desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=no&order=notasc")
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("status 404: bad req when topic is not in database", () => {
+    return request(app)
+      .get("/api/articles?topic=no")
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("not found");
       });
   });
 });
