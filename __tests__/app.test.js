@@ -436,7 +436,97 @@ describe("DELETE /api/comments/:comment_id", () => {
   test("status:400, responds with bad request when invalid input", () => {
     return request(app).delete("/api/comments/notnumber").expect(400);
   });
-  test("status:404, responds with not found when comment id not found", () => {
-    return request(app).delete("/api/comments/99999").expect(404);
+  test("status:204, responds with no content found when comment id not found", () => {
+    return request(app).delete("/api/comments/99999").expect(204);
+  });
+});
+describe("GET /api", () => {
+  test("status 200: responds with all the available endpoints", () => {
+    const input = {
+      "GET /api": {
+        description:
+          "serves up a json representation of all the available endpoints of the api",
+      },
+      "GET /api/topics": {
+        description: "serves an array of all topics",
+        queries: [],
+        exampleResponse: {
+          topics: [{ slug: "football", description: "Footie!" }],
+        },
+      },
+      "GET /api/articles": {
+        description: "serves an array of all articles",
+        queries: ["author", "topic", "sort_by", "order"],
+        exampleResponse: {
+          articles: [
+            {
+              title: "Seafood substitutions are increasing",
+              topic: "cooking",
+              author: "weegembump",
+              body: "Text from the article..",
+              created_at: 1527695953341,
+            },
+          ],
+        },
+      },
+      "GET /api/articles/:article_id": {
+        description:
+          "serve an article object by article_id with comment count included",
+        queries: [],
+        "example response": {
+          article: {
+            article_id: 1,
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: 1596464040000,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            votes: 100,
+            comment_count: "11",
+          },
+        },
+      },
+      "PATCH /api/articles/:article_id": {
+        description:
+          "Accepts an object in form {inc_votes : newVote} and responds with updated article with new number of votes",
+        queries: [],
+        "example response": {
+          article: {
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: 1596464040000,
+            votes: 105,
+          },
+        },
+      },
+      "GET /api/users": {
+        description:
+          "Responds with an array of objects with the property 'username' ",
+        queries: [],
+        "example response": [
+          {
+            username: "butter_bridge",
+            name: "jonny",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          },
+          {
+            username: "icellusedkars",
+            name: "sam",
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+          },
+        ],
+      },
+    };
+
+    return request(app)
+      .get("/api")
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(input);
+      });
   });
 });

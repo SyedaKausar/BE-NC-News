@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const fs = require("fs/promises");
 
 exports.fetchArticle = (id) => {
   const queryStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
@@ -114,7 +115,7 @@ exports.removeCommentById = (id) => {
       const idArray = result.rows.map(function (element) {
         return element.comment_id;
       });
-      
+
       if (idArray.includes(id)) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
@@ -122,7 +123,12 @@ exports.removeCommentById = (id) => {
       return db.query(queryStr, [id]);
     })
     .then((result) => {
-     
       return result.rows[0];
     });
+};
+exports.fetchAPIs = () => {
+  return fs.readFile("./endpoints.json", "utf-8").then((endpoints) => {
+    const apiEndpoints = JSON.parse(endpoints);
+    return apiEndpoints;
+  });
 };
